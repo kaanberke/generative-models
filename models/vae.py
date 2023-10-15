@@ -1,3 +1,4 @@
+import lightning.pytorch as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -82,6 +83,7 @@ class Decoder(nn.Module):
 
         return reconstructed_data
 
+
 class VariationalAutoencoder(nn.Module):
 
     def __init__(self, input_dimension, hidden_dimension, latent_dimension):
@@ -96,8 +98,10 @@ class VariationalAutoencoder(nn.Module):
         super(VariationalAutoencoder, self).__init__()
 
         # Instantiate encoder and decoder networks.
-        self.encoder = Encoder(input_dimension, hidden_dimension, latent_dimension)
-        self.decoder = Decoder(latent_dimension, hidden_dimension, input_dimension)
+        self.encoder = Encoder(input_dimension, hidden_dimension,
+                               latent_dimension)
+        self.decoder = Decoder(latent_dimension, hidden_dimension,
+                               input_dimension)
 
     def reparameterize(self, mean, log_variance):
         """
@@ -112,13 +116,13 @@ class VariationalAutoencoder(nn.Module):
         """
         # Calculate the standard deviation from log-variance.
         standard_deviation = torch.exp(0.5 * log_variance)
-        
+
         # Generate a random tensor from a standard normal distribution.
         epsilon = torch.randn_like(standard_deviation)
-        
+
         # Apply the reparameterization trick to obtain a sample from the latent space.
         latent_sample = mean + epsilon * standard_deviation
-        
+
         return latent_sample
 
     def forward(self, input_data):
@@ -133,13 +137,13 @@ class VariationalAutoencoder(nn.Module):
         """
         # Pass input data through encoder to obtain mean and log-variance of latent space distribution.
         mean, log_variance = self.encoder(input_data)
-        
+
         # Use the reparameterization trick to sample from the latent space.
         latent_sample = self.reparameterize(mean, log_variance)
-        
+
         # Pass the latent sample through the decoder to reconstruct the data.
         reconstructed_data = self.decoder(latent_sample)
-        
+
         return reconstructed_data, mean, log_variance
 
     def loss_function(self, x, reconstructed_x, mean, log_variance):
@@ -161,11 +165,116 @@ class VariationalAutoencoder(nn.Module):
         # Reconstruction loss: Measures how well the decoder is doing in reconstructing
         # the input data. We use Binary Cross Entropy loss since our input values are normalized
         # and in the range [0, 1].
-        recon_loss = F.binary_cross_entropy(reconstructed_x, x, reduction="sum")
+        recon_loss = F.binary_cross_entropy(reconstructed_x,
+                                            x,
+                                            reduction="sum")
 
-        # KL Divergence loss: Measures how much the learned latent variable distribution 
+        # KL Divergence loss: Measures how much the learned latent variable distribution
         # deviates from a standard normal distribution.
-        kl_loss = -0.5 * torch.sum(1 + log_variance - mean.pow(2) - log_variance.exp())
-        
+        kl_loss = -0.5 * torch.sum(1 + log_variance - mean.pow(2) -
+                                   log_variance.exp())
+
         # Total VAE loss = reconstruction loss + KL divergence loss
         return recon_loss + kl_loss
+
+
+class VAELightning(pl.LightningModule):
+
+    def __init__(self, vae_model, lr=1e-3):
+        """
+        Initialize the Lightning Module.
+
+        Parameters:
+            vae_model (nn.Module): The VAE model to be trained.
+            lr (float): Learning rate for the optimizer. Default: 1e-3.
+        """
+        super(VAELightning, self).__init__()
+        # Save hyperparameters
+        self.save_hyperparameters()
+        # Set the passed VAE model
+        self.vae = vae_model
+        # Set the learning rate
+        self.lr = lr
+
+    def forward(self, x):
+        """
+        Forward pass through the VAE model.
+
+        Parameters:
+            x (torch.Tensor): Input data.
+
+        Returns:
+            tuple: Reconstructed data, mean, and log-variance of latent space distribution.
+        """
+        # Forward pass through the VAE
+        return self.vae(x)
+
+    def configure_optimizers(self):
+        """
+        Choose the optimizer used for training.
+
+        Returns:
+            torch.optim.Optimizer: The optimizer used for training.
+        """
+        # TODO: Dynamic optimizer selection
+        # Use Adam optimizer with the set learning rate
+        return torch.optim.Adam(
+            self.parameters(),
+            lr=self.lr
+        )
+
+    def training_step(self, batch, batch_idx):
+        """
+        Perform a training step.
+
+        Parameters:
+            batch (tuple): A batch of data and its corresponding labels.
+            batch_idx (int): Index of the batch.
+
+        Returns:
+            torch.Tensor: The training loss.
+        """
+        # Extract data, ignoring labels
+        x = batch
+        x = x.view(x.size(0), -1)
+        # Forward pass through the VAE
+        reconstructed_x, mean, log_variance = self.vae(x)
+         # Calculate the VAE loss
+        loss = self.vae.loss_function(
+            x,
+            reconstructed_x,
+            mean,
+            log_variance
+        )
+        # Log the training loss
+        self.log("train_loss", loss)
+        # Return the loss
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        """
+        Perform a validation step.
+
+        Parameters:
+            batch (tuple): A batch of data and its corresponding labels.
+            batch_idx (int): Index of the batch.
+
+        Returns:
+            torch.Tensor: The validation loss.
+        """
+        # Extract data, ignoring labels
+        x = batch
+        x = x.view(x.size(0), -1)
+        # Forward pass through the VAE
+        reconstructed_x, mean, log_variance = self.vae(x)
+         # Calculate the VAE loss
+        loss = self.vae.loss_function(
+            x,
+            reconstructed_x,
+            mean,
+            log_variance
+        )
+        # Log the training loss
+        self.log("val_loss", loss)
+        # Return the loss
+        return loss

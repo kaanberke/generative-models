@@ -1,0 +1,17 @@
+# General training parameters
+max_epochs: 50
+batch_size: 4
+image_size: 32
+learning_rate: 0.001
+accelerator: "mps" # cuda/cpu/mps
+num_sanity_val_steps: 0
+
+# Data parameters
+data_dir: "data/processed/thumbnails128x128"
+train_val_test_split: [0.8, 0.1, 0.1]
+
+# VAE model-specific parameters
+VAE:
+  input_dimension: 3072
+  hidden_dimension: 256
+  latent_dimension: 20
