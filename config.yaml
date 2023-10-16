@@ -1,17 +1,67 @@
-# General training parameters
-max_epochs: 50
-batch_size: 4
-image_size: 32
-learning_rate: 0.001
-accelerator: "mps" # cuda/cpu/mps
-num_sanity_val_steps: 0
+# Checkpointing parameters
+Checkpoint:
+  dirpath: "checkpoints"
+  save_top_k: 1
+  monitor: "val_loss"
+  filename: "model_{epoch:02d}_{val_loss:.2f}"
+  monitor: "val_loss"
+  mode: "min"
+  verbose: true
 
-# Data parameters
-data_dir: "data/processed/thumbnails128x128"
-train_val_test_split: [0.8, 0.1, 0.1]
+# Trainer related parameters
+Trainer:
+  data_dir: "data/processed/thumbnails128x128"
+  train_val_test_split: [0.8, 0.1, 0.1]
+  lr: 3e-4
+  factor: 0.2
+  patience: 5
+  verbose: True
+  max_epochs: 50
+  batch_size: 8
+  image_size: 128
+  accelerator: "mps" # cuda/cpu/mps
+  num_sanity_val_steps: 0
+  monitor: "val_loss"
+  mode: "min"
+
+# Optimizer Params
+Optimizer:
+  name: "Adam"
+  params:
+    lr: 0.0003
+
+Scheduler:
+  name: "ReduceLROnPlateau"
+  params:
+    factor: 0.2
+    patience: 5
+    verbose: True
+    mode: "min"
+
 
 # VAE model-specific parameters
 VAE:
-  input_dimension: 3072
-  hidden_dimension: 256
+  input_dimension: [3, 128, 128]  # [Channels, Width, Height]
   latent_dimension: 20
+
+  # Encoder Convolutional Layers: [out_channels, kernel_size, stride, padding]
+  encoder_conv_layers:
+    - [32, 3, 2, 1]
+    - [64, 3, 2, 1]
+    - [128, 3, 2, 1]
+    - [256, 3, 2, 1]
+
+  # Decoder Deconvolutional Layers:
+  # [out_channels, kernel_size, stride, padding]
+  decoder_deconv_layers:
+    - [128, 4, 2, 1]
+    - [64, 4, 2, 1]
+    - [32, 4, 2, 1]
+    - [16, 4, 2, 1]
+    - [8, 4, 2, 1]
+    - [4, 4, 2, 1]
+    - [3, 4, 2, 1]
+
+
+
+# Additional parameters remain the same...
