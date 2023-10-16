@@ -1,6 +1,9 @@
+ipdb
 lightning
 matplotlib
 Pillow
+pretty_errors
+PyYAML
 setuptools
 torch
 torchvision
