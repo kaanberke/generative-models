@@ -6,7 +6,7 @@ from torchvision import transforms
 from pathlib import Path
 import yaml
 from datamodules import CustomDataModule
-from models.vae import VariationalAutoencoder, VAELightning
+from models.gan import Generator, Discriminator, GANLightning  # Assuming the GAN classes are in a module called 'gan'
 
 if __name__ == "__main__":
     
@@ -27,12 +27,8 @@ if __name__ == "__main__":
         train_val_test_split=config["Trainer"]["train_val_test_split"]
     )
 
-    # VAE Model setup
-    vae_model = VariationalAutoencoder(
-        config=config,
-    )
-
-    vae_lightning = VAELightning(vae_model, config=config)
+    # GAN Model setup
+    gan_lightning = GANLightning(config=config)  # Use the GAN section from the config
     checkpoint_callback = ModelCheckpoint(
             dirpath=config["Checkpoint"]["dirpath"],
             save_top_k=config["Checkpoint"]["save_top_k"],
@@ -56,4 +52,4 @@ if __name__ == "__main__":
     )
     
     # Training
-    trainer.fit(vae_lightning, datamodule=data_module)
+    trainer.fit(gan_lightning, datamodule=data_module)

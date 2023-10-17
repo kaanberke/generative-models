@@ -2,9 +2,8 @@
 Checkpoint:
   dirpath: "checkpoints"
   save_top_k: 1
-  monitor: "val_loss"
-  filename: "model_{epoch:02d}_{val_loss:.2f}"
-  monitor: "val_loss"
+  filename: "model_{epoch:02d}_{val_generator_loss:.2f}"
+  monitor: "val_generator_loss"
   mode: "min"
   verbose: true
 
@@ -21,7 +20,7 @@ Trainer:
   image_size: 128
   accelerator: "mps" # cuda/cpu/mps
   num_sanity_val_steps: 0
-  monitor: "val_loss"
+  monitor: "val_generator_loss"
   mode: "min"
 
 # Optimizer Params
@@ -63,5 +62,30 @@ VAE:
     - [3, 4, 2, 1]
 
 
+GAN:
+  latent_dim: 100  # Size of the random noise vector for the generator
 
-# Additional parameters remain the same...
+  generator_layers:
+    - 100  # Input: Latent dimension
+    - 256  # Hidden layer
+    - 512  # Hidden layer
+    - 1024 # Hidden layer
+    - 49152  # Output: Flattened image dimension (e.g., 28x28 for MNIST)
+
+  discriminator_layers:
+    - 49152  # Input: Flattened image dimension
+    - 512  # Hidden layer
+    - 256  # Hidden layer
+    - 1    # Output: Single value representing probability image is real
+
+  Optimizer:
+    name: Adam
+    params:
+      lr: 0.0002
+      betas: [0.5, 0.999]
+
+  Scheduler:
+    name: CosineAnnealingLR
+    params:
+      # Number of epochs before the learning rate is reset
+      T_max: 10
