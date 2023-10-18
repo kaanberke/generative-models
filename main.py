@@ -6,7 +6,7 @@ from torchvision import transforms
 from pathlib import Path
 import yaml
 from datamodules import CustomDataModule
-from models.gan import Generator, Discriminator, GANLightning  # Assuming the GAN classes are in a module called 'gan'
+from models.dcgan import DCGANLightning  # Assuming the GAN classes are in a module called 'gan'
 
 if __name__ == "__main__":
     
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     )
 
     # GAN Model setup
-    gan_lightning = GANLightning(config=config)  # Use the GAN section from the config
+    gan_lightning = DCGANLightning(config=config)  # Use the GAN section from the config
     checkpoint_callback = ModelCheckpoint(
             dirpath=config["Checkpoint"]["dirpath"],
             save_top_k=config["Checkpoint"]["save_top_k"],
