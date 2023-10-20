@@ -341,7 +341,7 @@ class CycleGANLightning(pl.LightningModule):
         }
 
         # Create the generator optimizer dynamically based on the configuration
-        optimizer_name_g = self.hparams["GAN"]["Optimizer"]["name"]
+        optimizer_name_g = self.hparams["CycleGAN"]["Optimizer"]["name"]
         optimizer_class_g = optimizer_mapping.get(optimizer_name_g)
         if optimizer_class_g is None:
             raise ValueError(
@@ -349,11 +349,11 @@ class CycleGANLightning(pl.LightningModule):
             )
         opt_g = optimizer_class_g(
             self.generator.parameters(),
-            **self.hparams["GAN"]["Optimizer"]["params"],
+            **self.hparams["CycleGAN"]["Optimizer"]["params"],
         )
 
         # Create the discriminator optimizer dynamically based on the configuration
-        optimizer_name_d = self.hparams["GAN"]["Optimizer"]["name"]
+        optimizer_name_d = self.hparams["CycleGAN"]["Optimizer"]["name"]
         optimizer_class_d = optimizer_mapping.get(optimizer_name_d)
         if optimizer_class_d is None:
             raise ValueError(
@@ -361,11 +361,11 @@ class CycleGANLightning(pl.LightningModule):
             )
         opt_d = optimizer_class_d(
             self.discriminator.parameters(),
-            **self.hparams["GAN"]["Optimizer"]["params"],
+            **self.hparams["CycleGAN"]["Optimizer"]["params"],
         )
 
         # Create the generator learning rate scheduler dynamically based on the configuration
-        scheduler_name_g = self.hparams["GAN"]["Scheduler"]["name"]
+        scheduler_name_g = self.hparams["CycleGAN"]["Scheduler"]["name"]
         scheduler_class_g = scheduler_mapping.get(scheduler_name_g)
         if scheduler_class_g is None:
             raise ValueError(
@@ -375,14 +375,14 @@ class CycleGANLightning(pl.LightningModule):
             "scheduler":
             scheduler_class_g(
                 opt_g,
-                **self.hparams["GAN"]["Scheduler"]["params"],
+                **self.hparams["CycleGAN"]["Scheduler"]["params"],
             ),
             "monitor":
             self.hparams["Trainer"]["monitor"]
         }
 
         # Create the discriminator learning rate scheduler dynamically based on the configuration
-        scheduler_name_d = self.hparams["GAN"]["Scheduler"]["name"]
+        scheduler_name_d = self.hparams["CycleGAN"]["Scheduler"]["name"]
         scheduler_class_d = scheduler_mapping.get(scheduler_name_d)
         if scheduler_class_d is None:
             raise ValueError(
@@ -392,7 +392,7 @@ class CycleGANLightning(pl.LightningModule):
             "scheduler":
             scheduler_class_d(
                 opt_d,
-                **self.hparams["GAN"]["Scheduler"]["params"],
+                **self.hparams["CycleGAN"]["Scheduler"]["params"],
             ),
             "monitor":
             self.hparams["Trainer"]["monitor"]

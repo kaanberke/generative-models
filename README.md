@@ -11,6 +11,7 @@ This repository contains implementations of various generative models, including
   - [DCGAN](#dcgan)
   - [GAN](#gan)
   - [VAE](#vae)
+  - [CycleGAN](#cyclegan)
 - [Configuration](#configuration)
 - [License](#license)
 - [Contributing](#contributing)
@@ -45,6 +46,10 @@ python main.py
 ```
 
 ## Models
+
+### CycleGAN
+
+Cycle Generative Adversarial Networks (CycleGAN) is a method for training unsupervised image-to-image translation models without paired data. The models are trained in a way that they can convert images from one domain to another and vice versa. For the code and implementation details, see models/cyclegan.py.
 
 ### DCGAN
 
