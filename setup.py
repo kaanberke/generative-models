@@ -17,7 +17,7 @@ def read_file(filename):
 
 setup(
     name="generative-models",
-    version="0.0.7",
+    version="0.0.8",
     author="Kaan Berke Ugurlar",
     author_email="kaanberkeugurlar@gmail.com",
     description="A project focusing on implementing generative models",

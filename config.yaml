@@ -128,3 +128,41 @@ DCGAN:
         params:  # Parameters for the learning rate scheduler
             step_size: 50
             gamma: 0.5
+
+
+CycleGAN:
+  Generator:
+    initial_size: [100, 1, 1]  # Latent dimension and initial size before convolutions.
+    layers:
+      - [100, 512, 4, 1, 0]          # [input_channels, output_channels, kernel_size, stride, padding]
+      - [512, 256, 4, 2, 1]
+      - [256, 128, 4, 2, 1]
+      - [128, 64, 4, 2, 1]
+      - [64, 3, 4, 2, 1]            # Output channels should match the image channels (e.g., 3 for RGB images)
+    intermediate_activations: leaky_relu
+    final_activation: tanh
+
+  Discriminator:
+    layers:
+      - [3, 64, 4, 2, 1]
+      - [64, 128, 4, 2, 1]
+      - [128, 256, 4, 2, 1]
+      - [256, 512, 4, 1, 0]
+      - [512, 1, 4, 1, 0]
+    intermediate_activations: leaky_relu
+    final_activation: sigmoid
+
+  Loss:
+    lambda_cycle: 10.0   # Weight for cycle consistency loss
+    lambda_identity: 0.5  # Weight for identity loss
+
+  Optimizer:
+    name: Adam
+    params:
+      lr: 0.0002
+      betas: [0.5, 0.999]
+
+  Scheduler:
+    name: LambdaLR
+    params:
+      lr_lambda: [Your Lambda Function for Learning Rate Adjustment]
