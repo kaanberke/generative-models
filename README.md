@@ -1,6 +1,6 @@
 # Generative Models
 
-This repository contains implementations of various generative models, including DCGAN, GAN, and VAE.
+This repository contains implementations of various generative models, including DCGAN, GAN, VAE, CycleGAN, and WGAN. Some of the implementations, specifically the GAN model, utilize the 128x128 thumbnails from the [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset) for training.
 
 ## Table of Contents
 
@@ -12,6 +12,7 @@ This repository contains implementations of various generative models, including
   - [GAN](#gan)
   - [VAE](#vae)
   - [CycleGAN](#cyclegan)
+  - [WGAN](#wgan)
 - [Configuration](#configuration)
 - [License](#license)
 - [Contributing](#contributing)
@@ -57,11 +58,15 @@ Deep Convolutional Generative Adversarial Networks (DCGAN) is a type of GAN wher
 
 ### GAN
 
-Generative Adversarial Networks (GAN) consists of two networks, a generator and a discriminator, that are trained together. The generator tries to produce data that comes from some probability distribution, while the discriminator tries to tell real from fake data. Check out the implementation in `models/gan.py`.
+Generative Adversarial Networks (GAN) consists of two networks, a generator and a discriminator, that are trained together. The generator tries to produce data that comes from some probability distribution, while the discriminator tries to tell real from fake data. The implementation in this repository uses the 128x128 thumbnails from the FFHQ dataset for training purposes. Check out the implementation in `models/gan.py`.
 
 ### VAE
 
 Variational Autoencoders (VAE) are a kind of autoencoder that's trained to learn the probability distribution of its input data. For more details, refer to `models/vae.py`.
+
+### WGAN
+
+Wasserstein Generative Adversarial Networks (WGAN) introduces a new way of training GANs to overcome issues like mode collapse. It replaces the traditional GAN loss with a Wasserstein distance, leading to more stable training. The implementation details and code can be found in `models/wgan.py`.
 
 ## Configuration
 
