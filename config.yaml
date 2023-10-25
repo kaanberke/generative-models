@@ -192,3 +192,50 @@ WGAN:
     name: CosineAnnealingLR
     params:
       T_max: 10
+  
+StyleGAN:
+  resolution: 128  # Target resolution of generated images.
+  latent_dim: 512  # Dimensionality of the latent space.
+
+  mapping_layers:  # Layers for the mapping network from latent space to intermediate latent space.
+    - [512, 512]
+    - [512, 512]
+    - [512, 512]
+    - [512, 512]
+    - [512, 512]
+    - [512, 512]
+    - [512, 512]
+    - [512, 512]
+
+  synthesis_layers:  # Parameters for the synthesis network to generate images.
+    - [512, 512, 4, 1, 0]
+    - [512, 512, 4, 2, 1]
+    - [512, 512, 4, 2, 1]
+    - [512, 256, 4, 2, 1]
+    - [256, 128, 4, 2, 1]
+    - [128, 3, 4, 2, 1]  
+
+  # Additional parameters specific to StyleGAN architecture.
+  truncation_psi: 0.7
+  truncation_cutoff: 8
+  style_mixing_prob: 0.9  # Probability of mixing styles during training
+
+  Optimizer:
+    name: Adam
+    params:
+      lr: 0.001
+      betas: [0.0, 0.99]
+      eps: 0.00000001
+
+  Scheduler:
+    name: CosineAnnealingLR
+    params:
+      T_max: 10
+  
+  Loss:
+    r1_gamma: 10.0  # R1 regularization weight
+
+  Training:
+    batch_size: 16
+    epochs: 100
+    gradient_accumulation_steps: 1  # How many steps to accumulate gradients before updating weights

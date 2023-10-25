@@ -6,7 +6,7 @@ from torchvision import transforms
 from pathlib import Path
 import yaml
 from datamodules import CustomDataModule
-from models.wgan import WGANLightning
+from models.stylegan import StyleGAN
 
 if __name__ == "__main__":
     
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     )
 
     # Model setup
-    gan_lightning = WGANLightning(config=config)
+    gan_lightning = StyleGAN(config=config)
     checkpoint_callback = ModelCheckpoint(
             dirpath=config["Checkpoint"]["dirpath"],
             save_top_k=config["Checkpoint"]["save_top_k"],
