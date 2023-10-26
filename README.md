@@ -13,6 +13,7 @@ This repository contains implementations of various generative models, including
   - [VAE](#vae)
   - [CycleGAN](#cyclegan)
   - [WGAN](#wgan)
+  - [StyleGAN](#stylegan)
 - [Configuration](#configuration)
 - [License](#license)
 - [Contributing](#contributing)
@@ -67,6 +68,11 @@ Variational Autoencoders (VAE) are a kind of autoencoder that's trained to learn
 ### WGAN
 
 Wasserstein Generative Adversarial Networks (WGAN) introduces a new way of training GANs to overcome issues like mode collapse. It replaces the traditional GAN loss with a Wasserstein distance, leading to more stable training. The implementation details and code can be found in `models/wgan.py`.
+
+### StyleGAN
+
+Style-Based Generator Architecture for Generative Adversarial Networks (StyleGAN) is a novel generative model proposed by Nvidia researchers. It introduces a new architecture that can produce high-resolution, photorealistic images and gives control over the synthesis process through style inputs. The implementation can be found at models/stylegan.py. To train StyleGAN with the default configuration, run:
+
 
 ## Configuration
 
